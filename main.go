@@ -36,7 +36,7 @@ func main() {
 
 	for _, line := range urlBodyContent {
 		if matchPattern.MatchString(line) {
-			count = count + 1
+			count++
 		}
 
 	}
