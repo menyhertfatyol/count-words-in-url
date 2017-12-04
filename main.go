@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"regexp"
 	"strings"
 )
 
@@ -21,14 +22,25 @@ func main() {
 		}
 	}
 
+	if url == "" {
+		fmt.Println("You must provide at least 1 valid URL!")
+		os.Exit(1)
+	}
+
 	urlBodyContent := strings.Split(getURLBodyString(url), "\n")
+
 	count := 0
 
+	matchPattern, err := regexp.Compile(word)
+	check(err)
+
 	for _, line := range urlBodyContent {
-		count = count + countOccurrance(line, word)
+		if matchPattern.MatchString(line) {
+			count = count + 1
+		}
 
 	}
-	fmt.Printf("Occurrance of '%s' on '%s' is %d\n", word, url, count)
+	fmt.Printf("Occurrance of '%s' on '%s' is %d\n", matchPattern, url, count)
 
 }
 
@@ -36,10 +48,6 @@ func check(e error) {
 	if e != nil {
 		log.Fatal(e)
 	}
-}
-
-func countOccurrance(text string, pattern string) int {
-	return strings.Count(text, pattern)
 }
 
 func isValidURL(url string) bool {
