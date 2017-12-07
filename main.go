@@ -11,36 +11,38 @@ import (
 )
 
 func main() {
-	var word string
-	var url string
+	words := []string{}
+	urls := []string{}
 
 	for _, arg := range os.Args[1:] {
 		if isValidURL(arg) {
-			url = arg
+			urls = append(urls, arg)
 		} else {
-			word = arg
+			words = append(words, arg)
 		}
 	}
 
-	if url == "" {
+	if len(urls) == 0 {
 		fmt.Println("You must provide at least 1 valid URL!")
 		os.Exit(1)
 	}
 
-	urlBodyContent := strings.Split(getURLBodyString(url), "\n")
+	for _, url := range urls {
+		urlBodyContent := strings.Split(getURLBodyString(url), "\n")
+		count := 0
 
-	count := 0
+		for _, word := range words {
+			matchPattern, err := regexp.Compile(word)
+			check(err)
 
-	matchPattern, err := regexp.Compile(word)
-	check(err)
-
-	for _, line := range urlBodyContent {
-		if matchPattern.MatchString(line) {
-			count++
+			for _, line := range urlBodyContent {
+				if matchPattern.MatchString(line) {
+					count++
+				}
+			}
+			fmt.Printf("'%s' has %d occurrance(s) of '%s'\n", url, count, matchPattern)
 		}
-
 	}
-	fmt.Printf("Occurrance of '%s' on '%s' is %d\n", matchPattern, url, count)
 
 }
 
